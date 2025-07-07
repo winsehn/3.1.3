@@ -1,7 +1,6 @@
 package web.config;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import web.model.Role;
@@ -20,7 +19,6 @@ public class BdInit implements InitializingBean {
 
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     public BdInit(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;

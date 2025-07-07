@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import web.model.Role;
 import web.model.User;
@@ -16,15 +17,19 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequestMapping(value = "/admin")
 public class AdminController {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private RoleService roleService;
+    private final UserService userService;
 
+    private final RoleService roleService;
 
-    @GetMapping(value = "/admin")
+    public AdminController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
+
+    @GetMapping
     public String index(Model model, Principal principal) {
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
@@ -37,7 +42,7 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping(value = "/admin/create")
+    @PostMapping(value = "/create")
     public String addUser(Model model,
                           @RequestParam(name = "first_name") String first_name,
                           @RequestParam(name = "last_name") String last_name,
@@ -52,13 +57,13 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PostMapping(value = "/admin/delete")
+    @PostMapping(value = "/delete")
     public String deleteUser(@RequestParam(name = "id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }
 
-    @PostMapping(value = "/admin/edit")
+    @PostMapping(value = "/edit")
     public String editUser(Model model, @RequestParam(name = "id") Long id) {
         model.addAttribute("editingId", id);
         model.addAttribute("users", userService.getAllUsers());
@@ -67,7 +72,7 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping(value = "/admin/update")
+    @PostMapping(value = "/update")
     public String updateUser(Model model,
                              @RequestParam(name = "id") Long id,
                              @RequestParam(name = "first_name", required = false) String first_name,

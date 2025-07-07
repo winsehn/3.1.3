@@ -1,16 +1,13 @@
 package web.service;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import web.model.Role;
 import web.model.User;
 import web.model.auth.Password;
-import web.repository.RoleRepository;
 import web.repository.UsersRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,14 +17,14 @@ public class UserServiceImpl implements UserService {
 
     private final UsersRepository usersRepository;
 
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(UsersRepository usersRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+
+    public UserServiceImpl(UsersRepository usersRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -38,7 +35,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
         user.setPassword(new Password(password, passwordEncoder));
-        user.setRoles(reSetRoles(roles));
+        user.setRoles(roleService.reSetRoles(roles));
         usersRepository.addUser(user);
     }
 
@@ -61,7 +58,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setPassword(new Password(existing.getPassword()));
         }
-        user.setRoles(reSetRoles(roles));
+        user.setRoles(roleService.reSetRoles(roles));
         usersRepository.updateUser(user);
     }
 
@@ -93,14 +90,5 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User findUser(Long id) {
         return usersRepository.findUser(id);
-    }
-
-    private Set<Role> reSetRoles(Set<Role> roles) {
-        Set<Role> newRoles = new HashSet<>();
-        for (Role role : roles) {
-            Optional<Role> existing = roleRepository.findByName(role.getName());
-            newRoles.add(existing.orElseGet(() -> roleRepository.save(role)));
-        }
-        return newRoles;
     }
 }
