@@ -2,9 +2,9 @@ package web.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import web.model.User;
 
 @Controller
@@ -12,8 +12,9 @@ import web.model.User;
 public class UserController {
 
     @GetMapping
-    public String user(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("user", user);
-        return "user";
+    public ModelAndView user(@AuthenticationPrincipal User user) {
+        ModelAndView modelAndView = new ModelAndView("user");
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 }
