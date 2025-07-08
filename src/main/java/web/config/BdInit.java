@@ -13,11 +13,11 @@ import java.util.Set;
 
 @Component
 public class BdInit implements InitializingBean {
-    private UserService userService;
+    private final UserService userService;
 
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public BdInit(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
